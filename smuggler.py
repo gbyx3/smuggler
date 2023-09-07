@@ -1,11 +1,11 @@
-# The purpose of smugler is to read varius http headers from incoming requests
+# The purpose of smuggler is to read varius http headers from incoming requests
 # and store them in a database for later analysis.
 # Some of the headers are:
 #   - X-File-Name (defalt to file)
 #   - X-File-Extension (default to txt)
 #   - X-Payload
 # 
-# The database is a sqlite3 database and the table is called smugler.
+# The database is a sqlite3 database and the table is called smuggler.
 # The table has the following columns:
 #   - id (autoincrement)
 #   - timestamp (timestamp of the request)
@@ -27,8 +27,8 @@ import argparse
 import logging
 
 # Global variables
-DbFile = "smugler.db"
-DbTable = "smugler"
+DbFile = "smuggler.db"
+DbTable = "smuggler"
 DbTableCreate = f"CREATE TABLE IF NOT EXISTS {DbTable} (id INTEGER PRIMARY KEY, timestamp TEXT, filename TEXT, extension TEXT, payload TEXT)"
 DbTableInsert = "INSERT INTO " + DbTable + " (timestamp, filename, extension, payload) VALUES (?, ?, ?, ?)"
 
