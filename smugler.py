@@ -15,10 +15,9 @@
 #
 # Some COC:
 #   - String concatenation is done with the f-string method
-# example: f"CREATE TABLE IF NOT EXISTS {DbTable} (id INTEGER PRIMARY KEY, timestamp TEXT, filename TEXT, extension TEXT, payload TEXT)"
+#     example: f"CREATE TABLE IF NOT EXISTS {DbTable} (id INTEGER PRIMARY KEY, timestamp TEXT, filename TEXT, extension TEXT, payload TEXT)"
 
 from bottle import request, response, route, run
-#import bottle
 import sqlite3
 import os
 import sys
@@ -38,9 +37,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(mess
 
 
 def initiate_database():
-    # Check if database exists
     if not os.path.isfile(DbFile):
-        # Create database
         logging.info(f"Creating database {DbFile}")
         conn = sqlite3.connect(DbFile)
         c = conn.cursor()
@@ -49,11 +46,11 @@ def initiate_database():
         conn.close()
     else:
         logging.info(f"Database {DbFile} already exists")
+    return None
 
 
 @route('/', method=['GET', 'POST'])
 def index():
-    # Get headers
     headers = request.headers
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -61,18 +58,17 @@ def index():
     extension = headers.get('X-File-Extension', '')
     payload = headers.get('X-Payload', '')
 
-    # Insert into database
     conn = sqlite3.connect(DbFile)
     c = conn.cursor()
     c.execute(DbTableInsert, (timestamp, filename, extension, payload))
     conn.commit()
     conn.close()
 
-    return "OK"
+    response.status = 200
+    return
 
 
 if __name__ == "__main__":
-    # Parse arguments
     parser = argparse.ArgumentParser(description='Smugler')
     parser.add_argument('--host', dest='host', help='Host to listen to', default='0.0.0.0')
     parser.add_argument('--port', dest='port', help='Port to listen to', default=8080)
@@ -80,7 +76,7 @@ if __name__ == "__main__":
 
     # Initiate database
     initiate_database()
-    
+
     # Start server
     logging.info(f"Starting server on {args.host}:{args.port}")
     run(host=args.host, port=args.port, reloader=True)
